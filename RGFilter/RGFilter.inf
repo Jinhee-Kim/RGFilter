@@ -1,0 +1,32 @@
+;
+; RGFilter.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=
+ClassGuid={b86dff51-a31e-4bac-b3cf-e8cfe75c9fc2}
+Provider=%ManufacturerName%
+DriverVer=
+CatalogFile=RGFilter.cat
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+
+
+[Strings]
+ManufacturerName="Template" ;TODO: Replace with your manufacturer name
+ClassName=""
+DiskName="RGFilter Source Disk"
