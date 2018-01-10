@@ -114,10 +114,15 @@ NTSTATUS Callback(IN PVOID CallbackContext, IN PVOID Argument1, IN PVOID Argumen
 		DeleteValue(CallbackContext, (PREG_DELETE_VALUE_KEY_INFORMATION)Argument2);
 		break;
 	}
-
 	case RegNtSetValueKey:
 	{
 		SetValue(CallbackContext, (PREG_SET_VALUE_KEY_INFORMATION)Argument2);
+		break;
+	}
+	case RegNtPreQueryValueKey:
+	{
+		PREG_QUERY_VALUE_KEY_INFORMATION info = (PREG_QUERY_VALUE_KEY_INFORMATION)Argument2;
+		KdPrint(("[RGFilter!QueryValue] Value: %wZ\n", info->ValueName));
 		break;
 	}
 	case RegNtPreCreateKeyEx:
@@ -125,20 +130,21 @@ NTSTATUS Callback(IN PVOID CallbackContext, IN PVOID Argument1, IN PVOID Argumen
 		CreateKey(CallbackContext, (PREG_CREATE_KEY_INFORMATION)Argument2);
 		break;
 	}
-
 	case RegNtPreOpenKeyEx:
 	{
 		OpenKey(CallbackContext, (PREG_OPEN_KEY_INFORMATION)Argument2);
 		break;
 	}
-
+	case RegNtPostDeleteValueKey:
+	case RegNtPostSetValueKey:
+	case RegNtPostQueryValueKey:
+	case RegNtPostCreateKeyEx:
 	case RegNtPostOpenKeyEx:
 	{
 		PREG_POST_OPERATION_INFORMATION info = (PREG_POST_OPERATION_INFORMATION)Argument2;
-		KdPrint(("[RESULT:%s]\n", (NT_SUCCESS(info->Status) ? "Success" : "Failure")));
+		KdPrint(("[%s]\n", (NT_SUCCESS(info->Status) ? "Success" : "Failure")));
 		break;
 	}
-
 	default:
 		//KdPrint(("[%s:%d] NotifyClass => %s \n", _FN_, NotifyClass));
 		break;
@@ -177,7 +183,7 @@ VOID SetValue(PVOID context, PREG_SET_VALUE_KEY_INFORMATION info)
 	{
 	case 0ul:
 	{
-		KdPrint(("[RGFilter!%s] Value: %wZ, Type: REG_NONE, Value: NULL\n", _FN_, info->ValueName));
+		KdPrint(("[RGFilter!%s] Value: %wZ, Type: REG_NONE, Data: NULL\n", _FN_, info->ValueName));
 		break;
 	}
 	case 1ul:
@@ -208,9 +214,9 @@ VOID SetValue(PVOID context, PREG_SET_VALUE_KEY_INFORMATION info)
 	}
 	case 7ul:
 	{
-		KdPrint(("[RGFilter!%s] Value: %wZ, Type: REG_MULTI_SZ, Data:", _FN_, info->ValueName));
+		KdPrint(("[RGFilter!%s] Value: %wZ, Type: REG_MULTI_SZ", _FN_, info->ValueName));
 
-		WCHAR* data = (WCHAR*)info->Data;
+		/*WCHAR* data = (WCHAR*)info->Data;
 		WCHAR* pos = (WCHAR*)info->Data;
 		BOOLEAN check = FALSE;
 		int i = 0;
@@ -234,7 +240,7 @@ VOID SetValue(PVOID context, PREG_SET_VALUE_KEY_INFORMATION info)
 				break;
 			}
 			pos++;
-		}
+		}*/
 		break;
 	}
 	case 8ul:
@@ -278,7 +284,7 @@ VOID CreateKey(PVOID context, PREG_CREATE_KEY_INFORMATION  info)
 	}
 }
 
-VOID OpenKey(PVOID context, PREG_OPEN_KEY_INFORMATION info) // RegNtPreOpenKeyEx
+VOID OpenKey(PVOID context, PREG_OPEN_KEY_INFORMATION info) 
 {
 	UNREFERENCED_PARAMETER(context);
 	UNICODE_STRING registryPath;

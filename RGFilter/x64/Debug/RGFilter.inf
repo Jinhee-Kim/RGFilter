@@ -7,7 +7,7 @@ Signature="$WINDOWS NT$"
 Class=
 ClassGuid={b86dff51-a31e-4bac-b3cf-e8cfe75c9fc2}
 Provider=%ManufacturerName%
-DriverVer = 01/02/2018,12.31.3.768
+DriverVer = 01/04/2018,14.23.14.930
 CatalogFile=RGFilter.cat
 
 [DestinationDirs]
